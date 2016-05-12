@@ -13,11 +13,11 @@
 
     <title>
         
-          leisuro的博客 | leisuro&#39;s Blog
+          使用JSPatch一些注意的点 - leisuro的博客 | leisuro&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="http://kaijun.rocks/huxblog/">
+    <link rel="canonical" href="http://kaijun.rocks/huxblog/2015/05/10/JSPatch/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/huxblog/css/bootstrap.min.css">
@@ -140,138 +140,151 @@
 
 
     <!-- Main Content -->
-    <!-- Page Header -->
-<header class="intro-header" style="background-image: url('/huxblog/img/home-bg.jpg')">
+    
+<!-- Image to hack wechat -->
+<!-- <img src="http://kaijun.rocks/huxblog/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/huxblog/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
-                <div class="site-heading">
-                    <h1>leisuro的村屋</h1>
-                    <!--<hr class="small">-->
-                    <span class="subheading">山人leisuro</span>
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/huxblog/tags/#iOS基本方面" title="iOS基本方面">iOS基本方面</a>
+                        
+                          <a class="tag" href="/huxblog/tags/#JSPatch" title="JSPatch">JSPatch</a>
+                        
+                    </div>
+                    <h1>使用JSPatch一些注意的点</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by leisuro on
+                        2015-05-10
+                    </span>
                 </div>
             </div>
         </div>
     </div>
 </header>
 
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
 
-
-<!-- Main Content -->
-<div class="container">
-    <div class="row">
-        
-
-<!-- USE SIDEBAR -->
     <!-- Post Container -->
             <div class="
-                col-lg-8 col-lg-offset-1
-                col-md-8 col-md-offset-1
-                col-sm-12
-                col-xs-12
-                post-container
-            ">
-            
-                <!-- Main Content -->
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>使用JSPatch一些需要注意的地方<br>JSPatch提供的OC转JS网址这里 JSPatch一般用法就是，通过转换打好补丁js，第一步通过<code>[JSPatch startEngine]</code>开启引擎后, 加载<code>[JSPatch evaluateScript:js]</code>js代码.<br>那么稍微打补丁不注意会造成崩溃, 以下说说会崩溃的点，以及怎样使用.</p>
+<h4 id="1-数组取值"><a href="#1-数组取值" class="headerlink" title="1.数组取值"></a>1.数组取值</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">OC代码: SYAPIPostReplyEntity *replyEntity = self.post.info.diarys[indexPath.row];</span><br><span class="line">JSPatch: var replyEntity = self.post().info().replies[indexPath().row](); </span><br><span class="line">// 下面才是正确的</span><br><span class="line">var indexPathRow = indexPath.row();</span><br><span class="line">var replies =  self.post().info().replies();</span><br><span class="line">var replyEntity = replies.objectAtIndex(indexPathRow);</span><br></pre></td></tr></table></figure>
+<h4 id="2-字典取值"><a href="#2-字典取值" class="headerlink" title="2.字典取值"></a>2.字典取值</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">OC代码: NSString *contentHtml = contentDict[@&quot;html&quot;];</span><br><span class="line">// 通过网站转换过来的, 会造成崩溃的，是需要分割下的</span><br><span class="line">JSPatch: var contentHtml = contentDict[&quot;html&quot;]</span><br><span class="line">// 下面才是正确的</span><br><span class="line">var contentHtml = contentDict.valueForKey(&quot;html&quot;);</span><br><span class="line">#### 3.判断自定义的类型</span><br><span class="line">OC代码: if ([cell isKindOfClass:SYPostTopicCell.class])&#123;&#125;</span><br><span class="line">// 通过网站转换过来的&gt;&gt; 以下会造成崩溃的，因为你需要引入require(&apos;SYPostTopicCell,...&apos;)</span><br><span class="line">JSPatch: if (cell.isKindOfClass(SYPostTopicCell.class())) &#123;&#125;</span><br><span class="line">// 下面才是正确的</span><br><span class="line">require(&apos;SYPostTopicCell&apos;)</span><br><span class="line">if (cell.isKindOfClass(SYPostTopicCell.class())) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="4-自定义枚举跟系统枚举"><a href="#4-自定义枚举跟系统枚举" class="headerlink" title="4.自定义枚举跟系统枚举"></a>4.自定义枚举跟系统枚举</h4><p>OC代码:<br>假设已经定义好了这个枚举 &gt;<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">typedef NS_ENUM(NSInteger, SYPostTopicStatus) &#123;</span><br><span class="line">SYPostTopicStatusHtml = 0,</span><br><span class="line">SYPostTopicStatusProduct,</span><br><span class="line">SYPostTopicStatusDiary,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>JSPatch代码: <code>if (self.status == SYPostTopicStatusHtml) {}</code><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">// 通过网站转换过来的&gt;&gt; 以下会造成崩溃的，因为JSPatch解析不了枚举</span><br><span class="line">if (self.status == SYPostTopicStatusHtml) &#123;&#125;</span><br><span class="line">// 下面才是正确的</span><br><span class="line">if (self.status == 0) &#123;&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="5-方法带下划线的，JSPatch自己解析方法名有-下划线可以不用管"><a href="#5-方法带下划线的，JSPatch自己解析方法名有-下划线可以不用管" class="headerlink" title="5.方法带下划线的，JSPatch自己解析方法名有_下划线可以不用管"></a>5.方法带下划线的，JSPatch自己解析方法名有_下划线可以不用管</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">OC代码: [self.imageView sd_setImageWithURL: placeholderImage:];</span><br><span class="line">// 通过网站转换过来的&gt;&gt; 以下会造成崩溃的，因为方法带了_下划线的方法名, 开头要有双下划线</span><br><span class="line">self.imageView.sd_setImageWithURL_placeholderImage(&quot;url&quot;,image);</span><br><span class="line">// 下面才是正确的</span><br><span class="line">self.imageView.sd__setImageWithURL_placeholderImage(&quot;url&quot;,image);</span><br></pre></td></tr></table></figure>
+<h4 id="6-有一点static变量是在打Patch的方法进行初始化的需要注意"><a href="#6-有一点static变量是在打Patch的方法进行初始化的需要注意" class="headerlink" title="6.有一点static变量是在打Patch的方法进行初始化的需要注意"></a>6.有一点static变量是在打Patch的方法进行初始化的需要注意</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">OC:</span><br><span class="line">if (!replyHeights) &#123;</span><br><span class="line">replyHeights = [NSMutableDictionary dictionary];</span><br><span class="line">&#125;</span><br><span class="line">JSPatch: 也需要进行初始化，不然外部使用这个变量的时候，是nil;</span><br><span class="line">var replyHeights;</span><br><span class="line">if (!replyHeights) &#123;</span><br><span class="line">replyHeights = NSMutableDictionary.dictionary();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="7-关于方法重写"><a href="#7-关于方法重写" class="headerlink" title="7.关于方法重写"></a>7.关于方法重写</h4><blockquote>
+<p>如果你重写的方法，是之前类不存在的, 是打不上的, 打比方tableView 计算高度的方法你没写, 然后想打JSPatch，返回一定的高度，是打不上的，只能覆盖原有存在方法</p>
+</blockquote>
+<h4 id="8-关于frame"><a href="#8-关于frame" class="headerlink" title="8.关于frame"></a>8.关于frame</h4><blockquote>
+<p>获取一个View的frame.size的时候尽量分割多个变量来取，不要一次性全部取完. like&gt;&gt; self.view().frame().size().height …</p>
+</blockquote>
+<h4 id="9-关于延时"><a href="#9-关于延时" class="headerlink" title="9. 关于延时"></a>9. 关于延时</h4><blockquote>
+<p>使用dispatch_after换成 dispatch_after(0.5, function() {}</p>
+</blockquote>
+<h4 id="10-关于调试Log"><a href="#10-关于调试Log" class="headerlink" title="10. 关于调试Log"></a>10. 关于调试Log</h4><blockquote>
+<p>JSPatch: console.log(‘Hello iOS’)</p>
+</blockquote>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><blockquote>
+<p>打JSPatch多，总归是我们程序员本身写代码质量的问题, 不管是从什么角度来说, 都是细节没注意到位, 我就是个写代码很快缺细节总是不到位的一个人, 缺点很明显, 我要努力去要求自己像处女座一样. 1. 一个方法的代码量尽量不超过100行, 尽可能的越清晰越短, 打Patch也不至于那么麻烦 2. 写代码仔细, 细心, 可以跟同事CodeReview 3. 1,2 做好了, 3点也就没了</p>
+</blockquote>
 
 
-<div class="post-preview">
+                <hr>
 
-    <a href="/huxblog/2015/05/10/JSPatch/">
-        <h2 class="post-title">
-            使用JSPatch一些注意的点
-        </h2>
-        
-        <div class="post-content-preview">
-            使用JSPatch一些需要注意的地方JSPatch提供的OC转JS网址这里 JSPatch一般用法就是，通过转换打好补丁js，第一步通过[JSPatch startEngine]开启引擎后, 加载[JSPatch evaluateScript:js]js代码.那么稍微打补丁不注意会造成崩溃, 以下说说会崩溃的点，以及怎样使用.
-1.数组取值OC代码: SYAPIPostReplyEntity......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by leisuro on
-        2015-05-10
-    </p>
+                
 
-</div>
-<hr>
+                <ul class="pager">
+                    
+                    
+                </ul>
 
+                
 
-
-<!-- Pager -->
-
-<ul class="pager">
-    
-    
-</ul>
-
+                
 
             </div>
+    <!-- Side Catalog Container -->
+        
+
     <!-- Sidebar Container -->
+
             <div class="
-                col-lg-3 col-lg-offset-0
-                col-md-3 col-md-offset-0
-                col-sm-12
-                col-xs-12
-                sidebar-container
-            ">
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
                 <!-- Featured Tags -->
                 
 
-                <!-- Short About -->
-                <section class="visible-md visible-lg">
-                    <hr><h5><a href="/huxblog/about/">ABOUT ME</a></h5>
-                    <div class="short-about">
-
-                        
-                            <img src="/huxblog//img/avatar.jpg" />
-                        
-
-                        
-                            <p>千人指,万人封. 三尺秋水尘不染,可问江湖鼎峰;</p>
-                        
-
-                        <!-- SNS Link -->
-                        <ul class="list-inline">
-                            
-                            
-                            
-
-                            
-                                <li>
-                                    <a target="_blank" href="http://weibo.com/MakeZL">
-                                        <span class="fa-stack fa-lg">
-                                            <i class="fa fa-circle fa-stack-2x"></i>
-                                            <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
-                                        </span>
-                                    </a>
-                                </li>
-                            
-
-                            
-
-                            
-                                <li>
-                                    <a target="_blank"  href="https://github.com/MakeZL">
-                                        <span class="fa-stack fa-lg">
-                                            <i class="fa fa-circle fa-stack-2x"></i>
-                                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                                        </span>
-                                    </a>
-                                </li>
-                            
-                            
-                            
-                            
-                        </ul>
-                    </div>
-                </section>
-                
                 <!-- Friends Blog -->
                 
             </div>
-        
+
+        </div>
     </div>
-</div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
 
 
     <!-- Footer -->
