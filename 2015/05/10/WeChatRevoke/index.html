@@ -13,11 +13,11 @@
 
     <title>
         
-          Tags - leisuro的博客 | leisuro&#39;s Blog
+          如何去改变滴滴出行里面快车的图标? - leisuro的博客 | leisuro&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="http://kaijun.rocks/tags/">
+    <link rel="canonical" href="http://kaijun.rocks/2015/05/10/WeChatRevoke/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -141,86 +141,143 @@
 
     <!-- Main Content -->
     
-<!-- Page Header -->
-<header class="intro-header" style="background-image: url('/img/tag-bg.jpg')">
+<!-- Image to hack wechat -->
+<!-- <img src="http://kaijun.rocks/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
-                <div class="site-heading">
-                    <h1>Tags</h1>
-                    <!--<hr class="small">-->
-                    <span class="subheading">Hey, this is Tags.</span>
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#iOS逆向" title="iOS逆向">iOS逆向</a>
+                        
+                    </div>
+                    <h1>如何去改变滴滴出行里面快车的图标?</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by leisuro on
+                        2015-05-10
+                    </span>
                 </div>
             </div>
         </div>
     </div>
 </header>
 
-<!-- Main Content -->
-<div class="container">
-    <div class="row">
-        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <!-- 标签云 -->
-            <div id='tag_cloud' class="tags">
-                
-                    <a href="#JSPatch" title="JSPatch" rel="1">JSPatch</a>
-                
-                    <a href="#iOS逆向" title="iOS逆向" rel="1">iOS逆向</a>
-                
-            </div>
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
 
-            <!-- 标签列表 -->
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
 
-            
-            <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="JSPatch">
-                    <span class="tag-text">JSPatch</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/2015/05/10/JSPatch/">
-                        <h2 class="post-title">
-                            使用JSPatch一些注意的点
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
+                <p>如何去改变滴滴出行里面快车的图标?<br>对滴滴的结构比较好奇, 想试着能不能将快车的图标更换下, 然后花了长达近一个早上研究…</p>
+<p><img src="didi_1.jpg" alt="didi"><br><small class="img-hint">正常的滴滴打车图</small><br><img src="didi_2.jpg" alt="didi"><br><small class="img-hint">修改后的滴滴打车图</small></p>
+<blockquote>
+<p>分析: 滴滴是个非常出色的打车软件, 用cycript看了首页的控制器是ONEFrostedContainerViewController, 看到里面有个QMMapView, 最重要的就是这个地图的View啦, 里面的核心绘图都是通过openGL来绘制, 查看mapView里面的各种delegate回调, 查看其他方法等 但是以上是错误思想, 如果是替换图标的话, 第一步是去本地找有没有这个图标, 进入app找图片, 真是种煎熬啊, 还好我手起刀落, 眼光厉锐, 找到了ONECustomUI.bundle, 里面确实有我想看到图标, “map_icon_fast”、”map_icon_taxi” 等等, 然后通过hopper去搜索关键字, 发现在ONETabBarItemModel这个类里面有在使用的地方, 我找到了 - (id)mapIconimageNameWithMenuId:(id)arg1; 这个方法, 通过hook方法查看放回值, 确实是我想要看到的结果, 我修改了返回值, 并没有一丝改动. 好吧, 我就换个思路, 通过Tweak神器的logify.pl 去实现ONETabBarItemModel所有的方法. </p>
+</blockquote>
+<p>然后我留意到了这个方法<br>猜想arg1是下载的图标的url(滴滴的快车、专车等等的图标会随着一些活动来改变, 本地有一份placeHolder作为备用), successBlock是成功的回调, 在这里我们可以不需要去修改block</p>
+<ul>
+<li>(id)downloadImageWithStringUrl:(id)arg1 placeHolderImageName:(id)arg2 successBlock:(id)arg3;<br>尝试去改一下 Tweak</li>
+</ul>
+<p>%hook ONETabBarItemModel</p>
+<ul>
+<li>(id)downloadImageWithStringUrl:(id)arg1 placeHolderImageName:(id)arg2 successBlock:(id)arg3 { %log; id r = %orig(@”<a href="http://d.hiphotos.baidu.com/baike/w%3D268%3Bg%3D0/sign=2efbf31a47166d22387712927e186eca/6609c93d70cf3bc7e43db93dd500baa1cd112a25.jpg&quot;,arg2,arg3" target="_blank" rel="external">http://d.hiphotos.baidu.com/baike/w%3D268%3Bg%3D0/sign=2efbf31a47166d22387712927e186eca/6609c93d70cf3bc7e43db93dd500baa1cd112a25.jpg&quot;,arg2,arg3</a>); HBLogDebug(@” = %@”, r); return r; }<br>%end</li>
+</ul>
+
+
                 <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="iOS逆向">
-                    <span class="tag-text">iOS逆向</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/2015/05/10/WeChatRevoke/">
-                        <h2 class="post-title">
-                            如何去改变滴滴出行里面快车的图标?
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
 
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2015/05/10/JSPatch/" data-toggle="tooltip" data-placement="top" title="使用JSPatch一些注意的点">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
 
         </div>
     </div>
-</div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
 
 
     <!-- Footer -->
