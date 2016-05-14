@@ -194,17 +194,14 @@
 <li>第一步是去App找有没有这个图标, 进入app找文件真是种煎熬啊, 还好我手起刀落, 眼光厉锐, 找到了<code>ONECustomUI.bundle</code></li>
 <li><p>里面确实有我想看到图标, “map_icon_fast”、”map_icon_taxi” 等等<br><img src="icon_fast.png" alt="icon_fast"></p>
 </li>
-<li><p>找到图片后 然后通过hopper去搜索关键字<code>map_icon_fast</code>, 发现在ONETabBarItemModel这个类里面有在使用的地方, 通过hopper看到了 - (id)mapIconimageNameWithMenuId:(id)arg1; 这个方法, 试试通过创建Tweak hook方法查看放回值<br><img src="hopper.png" alt="hopper"></p>
+<li><p>找到图片后 然后通过hopper去搜索关键字<code>map_icon_fast</code>, 发现在<code>ONETabBarItemModel</code>这个类里面有在使用的地方, 通过hopper看到了 - (id)mapIconimageNameWithMenuId:(id)arg1; 这个方法, 试试通过创建Tweak hook方法查看放回值<br><img src="hopper.png" alt="hopper"></p>
 </li>
 <li><p>看到我想要看到的结果, 尝试修改了返回值, 并没有一丝改动. 好吧, 我就换个思路.</p>
 </li>
 <li>然后我留意到了这个方法<code>- (id)downloadImageWithStringUrl:(id)arg1 placeHolderImageName:(id)arg2 successBlock:(id)arg3;</code><br>猜想arg1是下载的图标的url(滴滴的快车、专车等等的图标会随着一些活动来改变, 本地有一份placeHolder作为备用), successBlock是成功的回调, 在这里我们可以不需要去修改block</li>
 </ol>
-<p>换了一张苍老师的照片, 去改一下 Tweak</p>
-<pre><code>%hook ONETabBarItemModel
-- (id)downloadImageWithStringUrl:(id)arg1 placeHolderImageName:(id)arg2 successBlock:(id)arg3 { %log; id r = %orig(@&quot;http://d.hiphotos.baidu.com/baike/w%3D268%3Bg%3D0/sign=2efbf31a47166d22387712927e186eca/6609c93d70cf3bc7e43db93dd500baa1cd112a25.jpg&quot;,arg2,arg3); HBLogDebug(@&quot; = %@&quot;, r); return r; }
-%end
-</code></pre><blockquote>
+<p>换了一张苍老师的照片, 去改一下Tweak<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">%hook ONETabBarItemModel</span><br><span class="line">- (id)downloadImageWithStringUrl:(id)arg1 placeHolderImageName:(id)arg2 successBlock:(id)arg3 &#123; </span><br><span class="line">    %log; </span><br><span class="line">    NSString *url = @<span class="string">"http://d.hiphotos.baidu.com/baike/w%3D268%3Bg%3D0/sign=2efbf31a47166d22387712927e186eca/6609c93d70cf3bc7e43db93dd500baa1cd112a25.jpg"</span>;<span class="comment">// 苍老师性感写真</span></span><br><span class="line">    <span class="keyword">return</span> %orig(url,arg2,arg3); </span><br><span class="line">&#125;</span><br><span class="line">%end</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
 <p>$ make package install<br>然后输入ssh的密码安装</p>
 </blockquote>
 <p><img src="didi_2.png" alt="didi2"><br><small class="img-hint">修改后的滴滴打车图</small><br>成功后然后就是这张苍老师图了~</p>
