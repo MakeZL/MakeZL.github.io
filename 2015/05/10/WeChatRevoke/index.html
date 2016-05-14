@@ -185,7 +185,7 @@
                 post-container">
 
                 <p>如何去改变滴滴出行里面快车的图标?<br>对滴滴的结构比较好奇, 想试着能不能将快车的图标更换下, 然后花了长达近一个早上研究…</p>
-<p><img src="didi_1.png" alt=""><br><small class="img-hint">正常的滴滴打车图</small><br><img src="didi_2.png" alt=""><br><small class="img-hint">修改后的滴滴打车图</small></p>
+<p><img src="didi_1.png" height="500"><br><small class="img-hint">正常的滴滴打车图</small><br><img src="didi_2.png" height="500"><br><small class="img-hint">修改后的滴滴打车图</small></p>
 <blockquote>
 <p>分析: 滴滴是个非常出色的打车软件, 用cycript看了首页的控制器是ONEFrostedContainerViewController, 看到里面有个QMMapView, 最重要的就是这个地图的View啦, 里面的核心绘图都是通过openGL来绘制, 查看mapView里面的各种delegate回调, 查看其他方法等 但是以上是错误思想, 如果是替换图标的话, 第一步是去本地找有没有这个图标, 进入app找图片, 真是种煎熬啊, 还好我手起刀落, 眼光厉锐, 找到了ONECustomUI.bundle, 里面确实有我想看到图标, “map_icon_fast”、”map_icon_taxi” 等等, 然后通过hopper去搜索关键字, 发现在ONETabBarItemModel这个类里面有在使用的地方, 我找到了 - (id)mapIconimageNameWithMenuId:(id)arg1; 这个方法, 通过hook方法查看放回值, 确实是我想要看到的结果, 我修改了返回值, 并没有一丝改动. 好吧, 我就换个思路, 通过Tweak神器的logify.pl 去实现ONETabBarItemModel所有的方法. </p>
 </blockquote>
