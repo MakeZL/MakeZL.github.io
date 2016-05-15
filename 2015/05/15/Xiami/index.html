@@ -13,11 +13,11 @@
 
     <title>
         
-          如何去改变滴滴出行里面快车的图标? - leisuro的博客 | leisuro&#39;s Blog
+          虾米音乐下载版权破解 - leisuro的博客 | leisuro&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="http://kaijun.rocks/2015/05/14/Didi/">
+    <link rel="canonical" href="http://kaijun.rocks/2015/05/15/Xiami/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -161,11 +161,11 @@
                           <a class="tag" href="/tags/#iOS逆向" title="iOS逆向">iOS逆向</a>
                         
                     </div>
-                    <h1>如何去改变滴滴出行里面快车的图标?</h1>
+                    <h1>虾米音乐下载版权破解</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
                         Posted by leisuro on
-                        2015-05-14
+                        2015-05-15
                     </span>
                 </div>
             </div>
@@ -184,31 +184,69 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>如何去改变滴滴出行里面快车的图标?<br>对滴滴的结构比较好奇, 想试着能不能将快车的图标更换下, 然后花了长达近一个早上研究…</p>
-<p><img src="didi_1.png" alt="didi"><br><small class="img-hint">正常的滴滴打车图</small></p>
-<blockquote>
-<p>分析: 滴滴是个非常出色的打车软件, 用cycript看了首页的控制器是ONEFrostedContainerViewController, 看到里面有个QMMapView, 最重要的就是这个地图的View啦, 里面的核心绘图都是通过openGL来绘制, 查看mapView里面的各种delegate回调, 查看其他方法等</p>
-</blockquote>
-<h3 id="但是以上是思想不对-饶了我一个多小时-Action-重来"><a href="#但是以上是思想不对-饶了我一个多小时-Action-重来" class="headerlink" title="但是以上是思想不对, 饶了我一个多小时.. Action 重来"></a>但是以上是思想不对, 饶了我一个多小时.. Action 重来</h3><p>想想是不是可以替换图标??<br><img src="bm.jpg" alt="bm"></p>
-<blockquote>
-<p>PS: PP助手下载一个越狱版的ipa或者通过dumpdecrypted在已有安装好的App进行砸壳, 获取OneTravel(滴滴出行App)</p>
-</blockquote>
-<ol>
-<li>第一步是去App找有没有这个图标, 进入app找文件真是种煎熬啊, 还好我手起刀落, 眼光厉锐, 找到了<code>ONECustomUI.bundle</code></li>
-<li><p>里面确实有我想看到图标, “map_icon_fast”、”map_icon_taxi” 等等<br><img src="icon_fast.png" alt="icon_fast"></p>
-</li>
-<li><p>找到图片后 然后通过hopper去搜索关键字<code>map_icon_fast</code>, 发现在<code>ONETabBarItemModel</code>这个类里面有在使用的地方, 通过hopper看到了 - (id)mapIconimageNameWithMenuId:(id)arg1; 这个方法, 试试通过创建Tweak hook方法查看放回值<br><img src="hopper.png" alt="hopper"></p>
-</li>
-<li><p>看到我想要看到的结果, 尝试修改了返回值, 并没有一丝改动. 好吧, 我就换个思路.</p>
-</li>
-<li>然后我留意到了这个方法<code>- (id)downloadImageWithStringUrl:(id)arg1 placeHolderImageName:(id)arg2 successBlock:(id)arg3;</code><br>猜想arg1是下载的图标的url(滴滴的快车、专车等等的图标会随着一些活动来改变, 本地有一份placeHolder作为备用), successBlock是成功的回调, 在这里我们可以不需要去修改block</li>
+                <p>虾米音乐下载版权破解<br>虾米是我比较喜欢的音乐App之一, 可近期体验不好的一点是, 很多歌曲被下架, 都听不了。 如果是之前加入本地缓存了歌还好, 没缓存的只能看别人听了, 这点让宝宝很是不开心. 好了, 接下来就要来尝试去破解下载它.</p>
+<p><img src="xiami_1.png" alt="xiami"><br><small class="img-hint">无法下载</small></p>
+<p>本文涉及到的工具</p>
+<pre><code>1. theos (https://github.com/theos/theos) 下载到/opt/theos
+2. hopper (http://pan.baidu.com/s/1qXoIJ1q) 网盘密码:3jgj
+3. ldid (http://joedj.net/ldid) 下载ldid，放到/opt/theos/bin/目录底下
+</code></pre><ol>
+<li><a href="#越狱版">非越狱版</a><ol>
+<li><a href="#ipa">ipa</a></li>
+<li><a href="#hopper">hopper</a></li>
+<li><a href="#ldid">ldid</a></li>
+<li><a href="#重签名">重签名</a></li>
 </ol>
-<p>换了一张苍老师的照片, 去改一下Tweak<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">%hook ONETabBarItemModel</span><br><span class="line">- (id)downloadImageWithStringUrl:(id)arg1 placeHolderImageName:(id)arg2 successBlock:(id)arg3 </span><br><span class="line">&#123; </span><br><span class="line">    %log; </span><br><span class="line">    NSString *url = @<span class="string">"http://d.hiphotos.baidu.com/baike/w%3D268%3Bg%3D0/sign=2efbf31a47166d22387712927e186eca/6609c93d70cf3bc7e43db93dd500baa1cd112a25.jpg"</span>;<span class="comment">// 苍老师性感写真</span></span><br><span class="line">    <span class="keyword">return</span> %orig(url,arg2,arg3); </span><br><span class="line">&#125;</span><br><span class="line">%end</span><br></pre></td></tr></table></figure></p>
+</li>
+<li><a href="#非越狱版">越狱版</a><ol>
+<li><a href="#theos">theos</a></li>
+</ol>
+</li>
+</ol>
+<ul>
+<li><h2 id="非越狱版"><a href="#非越狱版" class="headerlink" title="非越狱版"></a>非越狱版</h2></li>
+<li><h4 id="ipa"><a href="#ipa" class="headerlink" title="ipa"></a>ipa</h4><p>通过pp助手或者同步助手, 下载App的ipa包, 通过解压归档文件, 里面包含了需要逆向的App文件等信息</p>
+</li>
+<li><h4 id="hopper"><a href="#hopper" class="headerlink" title="hopper"></a>hopper</h4><p>有了App的可执行文件, 那我们就可以去做点什么事情了, 将xiami.app拖进hopper里面, 在左上角去搜索<code>XVerifyRightResultModel</code>这个类, 里面有个<code>isVerifySuccess</code>的Bool类型的变量, 它就是我们要改的值.<br><img src="hopper.png" alt="hopper"><br><small class="img-hint">查看某个类</small><br>下面我们来修改这个<code>isVerifySuccess</code>的返回值为true.<br>按住键盘上的<code>Option+A</code>, 将值永远返回成true, 0x1<br><img src="hopper1.png" alt="hopper1"><br>将下一行的值也通过<code>Option+A</code>, 修改换成<code>bx lr</code><br><img src="hopper2.png" alt="hopper2"><br>完毕后按住键盘上<code>Shift+Command+E</code>导出可执行文件到桌面, 命名需要跟虾米App里面的可执行文件名字一样, 进入虾米App里面, 替换可执行文件.</p>
+</li>
+</ul>
+<blockquote>
+<p>大工即将完成</p>
+</blockquote>
+<ul>
+<li><h4 id="ldid"><a href="#ldid" class="headerlink" title="ldid"></a>ldid</h4></li>
+</ul>
+<p>拿到你公司项目或者自己创建一个Demo, 选择好Code Sign编译后, 通过ldid来获取App底下的数据, 但是得保证你手机上安装的证书是有效的.</p>
+<p><code>./ldid -e ./Demo.app/demo</code> </p>
+<p>新建Entitlements.plist<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span>?&gt;</span><br><span class="line">&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;</span><br><span class="line">&lt;plist version="1.0"&gt;</span><br><span class="line">&lt;dict&gt;</span><br><span class="line">&lt;key&gt;application-identifier&lt;/key&gt;</span><br><span class="line">&lt;string&gt;123456.io.github.makezl&lt;/string&gt;</span><br><span class="line">&lt;key&gt;com.apple.developer.team-identifier&lt;/key&gt;</span><br><span class="line">&lt;string&gt;123456&lt;/string&gt;</span><br><span class="line">&lt;key&gt;get-task-allow&lt;/key&gt;</span><br><span class="line">&lt;true/&gt;</span><br><span class="line">&lt;key&gt;keychain-access-groups&lt;/key&gt;</span><br><span class="line">&lt;array&gt;</span><br><span class="line">&lt;string&gt;123456.io.github.makezl&lt;/string&gt;</span><br><span class="line">&lt;/array&gt;</span><br><span class="line">&lt;/dict&gt;</span><br><span class="line">&lt;/plist&gt;</span><br></pre></td></tr></table></figure></p>
+<h4 id="embedded-mobileprovision"><a href="#embedded-mobileprovision" class="headerlink" title="embedded.mobileprovision"></a>embedded.mobileprovision</h4><p>进入公司的App, 或者你自己编译好的App里面, 复制embedded.mobileprovision到xiami.app里面</p>
+<ul>
+<li><h4 id="重签名"><a href="#重签名" class="headerlink" title="重签名"></a>重签名</h4></li>
+</ul>
+<blockquote>
+<p>证书名字可以在钥匙串中找到</p>
+</blockquote>
+<p>codesign -f -s “iPhone Developer: YouName” –entitlements Entitlements.plist xiami.app</p>
+<p>打包成ipa, 给微信重新签名后，我们就可以用xcrun来生成ipa了，具体实现如下：<br><code>xcrun -sdk iphoneos PackageApplication -v xiami.app  -o ~/xiami.ipa</code></p>
+<p>通过PP助手安装到你手机上, 就可以啦~~</p>
+<p><img src="xiami_2.png" alt="xiami2"><br><small class="img-hint">修改后的虾米音乐</small></p>
+<ul>
+<li><h2 id="越狱版"><a href="#越狱版" class="headerlink" title="越狱版"></a>越狱版</h2></li>
+</ul>
+<p>获取App文件: 通过dumpdecrypted砸壳, 网上很多资料讲解, 或者简单一点通过pp助手或者同步助手, 下载App的ipa包, 通过解压归档文件, 里面包含了需要逆向的App文件等信息</p>
+<blockquote>
+<p>分析: 第一步尝试的通过Tweak去修改会员的返回值, 通过hopper搜索isVip这个类型的变量, 发现改了isVip也无法下载, 会员应该是通过服务器同步的.</p>
+</blockquote>
+<h3 id="以上貌似是错误分析"><a href="#以上貌似是错误分析" class="headerlink" title="以上貌似是错误分析"></a>以上貌似是错误分析</h3><p><img src="bm.jpg" alt="bm"></p>
+<blockquote>
+<p>换思路. 从界面入手, 通过Cycript找到下载按钮的位置, 然后一步步去跟踪下载会调用的方法, 最终找到判断是否可以下载的方法, hook掉.<br>第一步尝试的通过Tweak去修改isVip这个类型的数据, 发现即时改了isVip也无法下载, 应该是通过服务器同步的.<br>暂时放弃了通过修改vip的办法..<br>通过Hopper一步步追踪实现找到了<code>XVerifyRightResultModel</code>类, 看到有个属性<code>isVerifySuccess</code></p>
+</blockquote>
+<p>创建Tweak<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">%hook XVerifyRightResultModel</span><br><span class="line">- (BOOL)isVerifySuccess&#123;</span><br><span class="line"><span class="keyword">return</span> YES;</span><br><span class="line">&#125;</span><br><span class="line">%end</span><br></pre></td></tr></table></figure></p>
 <h3 id="重新编译Tweak"><a href="#重新编译Tweak" class="headerlink" title="重新编译Tweak"></a>重新编译Tweak</h3><blockquote>
 <p>$ make package install<br>然后输入ssh的密码安装</p>
 </blockquote>
-<p><img src="didi_2.png" alt="didi2"><br><small class="img-hint">修改后的滴滴打车图</small><br>成功后然后就是这张苍老师图了~</p>
-<p>仅供学习~ 欢迎交流.</p>
+<p><img src="xiami_2.png" alt="xiami2"><br><small class="img-hint">修改后的虾米音乐</small><br>可以成功下载歌曲, 但是不能直接播放音乐. 有兴趣的童鞋弄好了, 可以告诉我下~<br>以后不担心歌曲随便下架的问题了 &gt;v&lt;</p>
+<p>以上内容仅供学习~ 欢迎交流.</p>
 
 
                 <hr>
@@ -218,11 +256,11 @@
                 </style>
                 <div class="ds-share"
                     style="text-align: right"
-                    data-thread-key="2015/05/14/Didi/"
-                    data-title="如何去改变滴滴出行里面快车的图标?"
-                    data-url="http://kaijun.rocks/2015/05/14/Didi/"
+                    data-thread-key="2015/05/15/Xiami/"
+                    data-title="虾米音乐下载版权破解"
+                    data-url="http://kaijun.rocks/2015/05/15/Xiami/"
                     data-images=""
-                    data-content="如何去改变滴滴出行里面快车的图标?对滴滴的结构比较好奇, 想试着能不能将快车的图标更换下, 然... | leisuro的博客 | leisuro&#39;s Blog " >
+                    data-content="虾米音乐下载版权破解虾米是我比较喜欢的音乐App之一, 可近期体验不好的一点是, 很多歌曲被下... | leisuro的博客 | leisuro&#39;s Blog " >
                     <div class="ds-share-inline">
                       <ul  class="ds-share-icons-16">
                         <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
@@ -240,13 +278,9 @@
 
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/2015/05/15/Xiami/" data-toggle="tooltip" data-placement="top" title="虾米音乐下载版权破解">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/2015/05/10/JSPatch/" data-toggle="tooltip" data-placement="top" title="使用JSPatch一些注意的点">Next Post &rarr;</a>
+                            <a href="/2015/05/14/Didi/" data-toggle="tooltip" data-placement="top" title="如何去改变滴滴出行里面快车的图标?">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -255,9 +289,9 @@
                 <!-- 多说评论框 start -->
                 <div class="comment">
                     <div class="ds-thread"
-                        data-thread-key="2015/05/14/Didi/"
-                        data-title="如何去改变滴滴出行里面快车的图标?"
-                        data-url="http://kaijun.rocks/2015/05/14/Didi/" >
+                        data-thread-key="2015/05/15/Xiami/"
+                        data-title="虾米音乐下载版权破解"
+                        data-url="http://kaijun.rocks/2015/05/15/Xiami/" >
                     </div>
                 </div>
                 <!-- 多说评论框 end -->
