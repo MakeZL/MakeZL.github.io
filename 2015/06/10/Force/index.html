@@ -13,11 +13,11 @@
 
     <title>
         
-          About - leisuro的博客 | leisuro&#39;s Blog
+          让非6s的越狱设备支持3DTouch - leisuro的博客 | leisuro&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="http://kaijun.rocks/about/">
+    <link rel="canonical" href="http://kaijun.rocks/2015/06/10/Force/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -140,62 +140,154 @@
 
 
     <!-- Main Content -->
-    <!-- Page Header -->
-<header class="intro-header" style="background-image: url('/img/about-bg.jpg')">
+    
+<!-- Image to hack wechat -->
+<!-- <img src="http://kaijun.rocks/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
-                <div class="site-heading">
-                    <h1>About</h1>
-                    <!--<hr class="small">-->
-                    <span class="subheading">Hey, this is leisuro.</span>
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#ReverseApp" title="ReverseApp">ReverseApp</a>
+                        
+                    </div>
+                    <h1>让非6s的越狱设备支持3DTouch</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by leisuro on
+                        2015-06-10
+                    </span>
                 </div>
             </div>
         </div>
     </div>
 </header>
 
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
 
-
-<!-- Main Content -->
-<div class="container">
-    <div class="row">
-        
-
-<!-- USE SIDEBAR -->
     <!-- Post Container -->
             <div class="
-                col-lg-8 col-lg-offset-1
-                col-md-8 col-md-offset-1
-                col-sm-12
-                col-xs-12
-                post-container
-            ">
-            
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>百度百科资料 : 3D Touch的触控技术，被苹果称为新一代多点触控技术。其实，就是此前在Apple Watch上采用的Force Touch，屏幕可感应不同的感压力度触控。</p>
+</blockquote>
+<p><img src="1.jpg" alt="1"><br><small class="img-hint">3DTouch</small></p>
+<p>这让我们大于9.0系统, 设备又不是6s的人情何以堪. /(ㄒoㄒ)/~~ 我这等穷丝当然也不会为了体验去换一台.</p>
+<h6>让我们设想一下, 3DTouch是一种多点触控技术, 老版本的iPhone在这方面是没有这个硬件支持的, 那么我们如何去让iPhone也支持这个功能? </h6>
+
+<blockquote>
+<p>原理: 自己对每个SBIconView(桌面上的每个View)添加手势, 然后让设备与屏幕支持3DTocuh 来蒙骗系统.</p>
+</blockquote>
+<p>换成Tweak代码的话就是：</p>
+<h4 id="1-初始化SBIconView添加长按手势"><a href="#1-初始化SBIconView添加长按手势" class="headerlink" title="1.初始化SBIconView添加长按手势"></a>1.初始化SBIconView添加长按手势</h4><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">- (id)initWithContentType:(unsigned long long)arg1 &#123;</span><br><span class="line"></span><br><span class="line">SBIconController *sbIconC = [objc_getClass(<span class="string">"SBIconController"</span>) sharedInstance];</span><br><span class="line">UILongPressGestureRecognizer *shortcutMenuPeekGesture = MSHookIvar&lt;UILongPressGestureRecognizer *&gt;(self, <span class="string">"_shortcutMenuPeekGesture"</span>);</span><br><span class="line">shortcutMenuPeekGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:sbIconC action:@selector(_handleShortcutMenuPeek:)];</span><br><span class="line">[self addGestureRecognizer:shortcutMenuPeekGesture];</span><br><span class="line"><span class="comment">// add swipe-up alternative for those weren't able to get the longpress to edit to work</span></span><br><span class="line">UISwipeGestureRecognizer *swipeGest = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(revealMenuSwiped:)];</span><br><span class="line">[swipeGest setDirection:<span class="number">4</span>];</span><br><span class="line">[self addGestureRecognizer:swipeGest];</span><br><span class="line"><span class="keyword">return</span> %orig;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)revealMenuSwiped:(id)arg1 &#123;</span><br><span class="line">[self _handleSecondHalfLongPressTimer:nil];</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">void</span>)_updateJitter &#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">// in case any error :)</span></span><br><span class="line">SBIconController *sbIconC = [objc_getClass(<span class="string">"SBIconController"</span>) sharedInstance];</span><br><span class="line">[sbIconC _dismissShortcutMenuAnimated:YES completionHandler:^&#123;</span><br><span class="line"></span><br><span class="line">&#125;];</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="2-改变UIDevice与UIScreen对force的支持"><a href="#2-改变UIDevice与UIScreen对force的支持" class="headerlink" title="2.改变UIDevice与UIScreen对force的支持"></a>2.改变UIDevice与UIScreen对force的支持</h4><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// add support of Peek and Pop</span></span><br><span class="line"><span class="comment">// something missing here ;)</span></span><br><span class="line">%hook UIScreen</span><br><span class="line">- (int)_forceTouchCapability &#123;</span><br><span class="line"><span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line">%end</span><br><span class="line">%hook UITraitCollection</span><br><span class="line">- (int)forceTouchCapability &#123;</span><br><span class="line"><span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line">%end</span><br><span class="line">%hook UIDevice</span><br><span class="line">- (BOOL)_supportsForceTouch &#123;</span><br><span class="line"><span class="keyword">return</span> YES;</span><br><span class="line">&#125;</span><br><span class="line">- (BOOL)_supportsHapticFeedback &#123;</span><br><span class="line"><span class="keyword">return</span> YES;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>核心代码就是这样, 可以看<a href="https://github.com/iMokhles/" target="_blank" rel="external">iMokhles</a>完整的Github代码.<br><a href="https://github.com/iMokhles/RevealMenu" target="_blank" rel="external">https://github.com/iMokhles/RevealMenu</a></p>
+<blockquote>
+<p>ps:就这样就完成了, 以上只针对越狱过的设备喔.</p>
+</blockquote>
+<p>欢迎交流, 我是leisuro.</p>
+
+
+                <hr>
+
+                
+                <!-- 多说 Share start -->
+                </style>
+                <div class="ds-share"
+                    style="text-align: right"
+                    data-thread-key="2015/06/10/Force/"
+                    data-title="让非6s的越狱设备支持3DTouch"
+                    data-url="http://kaijun.rocks/2015/06/10/Force/"
+                    data-images=""
+                    data-content="
+百度百科资料 : 3D Touch的触控技术，被苹果称为新一代多点触控技术。其实，就是此前在... | leisuro的博客 | leisuro&#39;s Blog " >
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- 多说 Share end-->
                 
 
-<!-- Chinese Version -->
-<div class="zh post-container">
-    <blockquote>
-<p>Hi, 我是leisuro.<br>执着与阳光并存的96年小伙</p>
-</blockquote>
-<p>在高一那年辍学, 从此入行(keng) 比较早, 之前一直苦逼的在广州做PHP, 后来在14年机缘巧合投奔了北京iOS的大怀抱, 面临找工作的一段时间, 被学历所处处鄙视(#‵′)凸, 在这里我要说一下, (咳咳), 我接触过大部分一本, 硕士生, 敲代码的速度几乎没有比我快的, 我还是不装逼了, 不然会被打.. <br>往后该怎么走呢? 看造化吧, 谁也预知不了未来, 但是未来是靠现在熬出来的, 也敬热爱编程的人, 不要放弃, 不要被我一个初中生给比下去了。 &gt;_&lt;<br><br><br>加油, 与热爱分享的你一起, 共同成长!</p>
-<p style="text-align:right;"><br>    —— <a href="https://github.com/MakeZL/" target="_blank" rel="external">leisuro － Github</a><br></p>
-</div>
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2015/05/27/WeChatOnRevoke/" data-toggle="tooltip" data-placement="top" title="简单的做一款微信防止撤回小插件">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
 
+                
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread"
+                        data-thread-key="2015/06/10/Force/"
+                        data-title="让非6s的越狱设备支持3DTouch"
+                        data-url="http://kaijun.rocks/2015/06/10/Force/" >
+                    </div>
+                </div>
+                <!-- 多说评论框 end -->
+                
 
+                
 
+            </div>
+    <!-- Side Catalog Container -->
+        
 
+    <!-- Sidebar Container -->
 
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
 
-<!-- 多说评论框 start -->
-<div class="comment">
-    <div class="ds-thread"
-        data-thread-key="about/index.html"
-        data-title="About"
-        data-url="http://kaijun.rocks/about/index.html" >
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#ReverseApp" title="ReverseApp">ReverseApp</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+
+        </div>
     </div>
-</div>
+</article>
+
+
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
     // dynamic User by Hux
@@ -219,87 +311,6 @@
 
 
 
-            </div>
-    <!-- Sidebar Container -->
-            <div class="
-                col-lg-3 col-lg-offset-0
-                col-md-3 col-md-offset-0
-                col-sm-12
-                col-xs-12
-                sidebar-container
-            ">
-                <!-- Featured Tags -->
-                
-                <section>
-                    <!-- no hr -->
-                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
-                    <div class="tags">
-                        
-                            
-                            <a href="/tags/#ReverseApp" title="ReverseApp" rel="4">ReverseApp</a>
-                            
-                        
-                            
-                        
-                    </div>
-                </section>
-                
-
-                <!-- Short About -->
-                <section class="visible-md visible-lg">
-                    <hr><h5><a href="/about/">ABOUT ME</a></h5>
-                    <div class="short-about">
-
-                        
-                            <img src="/img/avatar.jpg" />
-                        
-
-                        
-                            <p>为了明天能有曙光;</p>
-                        
-
-                        <!-- SNS Link -->
-                        <ul class="list-inline">
-                            
-                            
-                            
-
-                            
-                                <li>
-                                    <a target="_blank" href="http://weibo.com/MakeZL">
-                                        <span class="fa-stack fa-lg">
-                                            <i class="fa fa-circle fa-stack-2x"></i>
-                                            <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
-                                        </span>
-                                    </a>
-                                </li>
-                            
-
-                            
-
-                            
-                                <li>
-                                    <a target="_blank"  href="https://github.com/MakeZL">
-                                        <span class="fa-stack fa-lg">
-                                            <i class="fa fa-circle fa-stack-2x"></i>
-                                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                                        </span>
-                                    </a>
-                                </li>
-                            
-                            
-                            
-                            
-                        </ul>
-                    </div>
-                </section>
-                
-                <!-- Friends Blog -->
-                
-            </div>
-        
-    </div>
-</div>
 
 
     <!-- Footer -->
