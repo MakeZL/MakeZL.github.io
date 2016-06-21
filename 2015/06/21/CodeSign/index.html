@@ -192,9 +192,10 @@
 <li>防动态ptrace注入</li>
 <li>防止tweak注入</li>
 <li>破壳加固</li>
+<li>防止Reveal查看视图</li>
 <li>签名判断<br>……</li>
 </ol>
-<p>今天来讲第五点, <code>签名判断</code>, 以后有时间来讲其他几种方式.<br>有些逆向者, 将一些App核心功能hook掉, 然后打包成.deb出售, 或者用企业证书重签名之后, 在出售给需要的人.</p>
+<p>今天来讲第六点, <code>签名判断</code>, 以后有时间来讲其他几种方式.<br>有些逆向者, 将一些App核心功能hook掉, 然后打包成.deb出售, 或者用企业证书重签名之后, 在出售给需要的人.</p>
 <blockquote>
 <p>虽然没有绝对的安全, 也避免不了, 但是我们要尽力防止一下, 对不对?</p>
 </blockquote>
@@ -204,7 +205,7 @@
 <p>用命令行来看看里面是什么数据<br><code>vi Example.app/embedded.mobileprovision</code></p>
 <figure class="highlight js"><table><tr><td class="code"><pre><span class="line">......</span><br><span class="line">&lt;!DOCTYPE plist PUBLIC <span class="string">"-//Apple//DTD PLIST 1.0//EN"</span> <span class="string">"http://www.apple.com/DTDs/PropertyList-1.0.dtd"</span>&gt;</span><br><span class="line">&lt;plist version="1.0"&gt;</span><br><span class="line">&lt;dict&gt;</span><br><span class="line">&lt;key&gt;AppIDName&lt;/key&gt;</span><br><span class="line">&lt;string&gt;soyoungapp&lt;/string&gt;</span><br><span class="line">&lt;key&gt;ApplicationIdentifierPrefix&lt;/key&gt;</span><br><span class="line">&lt;array&gt;</span><br><span class="line">&lt;string&gt;86NC63XXX&lt;/string&gt;</span><br><span class="line">&lt;/array&gt;</span><br><span class="line">&lt;key&gt;CreationDate&lt;/key&gt;</span><br><span class="line">&lt;date&gt;2015-11-16T11:13:33Z&lt;/date&gt;</span><br><span class="line">&lt;key&gt;Platform&lt;/key&gt;</span><br><span class="line">&lt;array&gt;</span><br><span class="line">&lt;string&gt;iOS&lt;/string&gt;</span><br><span class="line">&lt;/array&gt;</span><br><span class="line">.......</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>ps:如果你不清楚如何将越狱App安装到非越狱设备设备, 可以看(前面这篇文章)[<a href="http://makezl.github.io/2015/05/15/Xiami/" target="_blank" rel="external">http://makezl.github.io/2015/05/15/Xiami/</a>]</p>
+<p>ps:如果你不清楚如何将越狱App安装到非越狱设备设备, 可以看<a href="http://makezl.github.io/2015/05/15/Xiami/" target="_blank" rel="external">前面这篇文章</a></p>
 </blockquote>
 <p>每个证书都会有一个Team, 我们根据Team里面的TeamIdentifier来判断 你签名的证书是否不一致, 不一致就代表被篡改了.</p>
 <h4 id="获取签名代码-CodeSignTask"><a href="#获取签名代码-CodeSignTask" class="headerlink" title="获取签名代码(CodeSignTask)"></a>获取签名代码(CodeSignTask)</h4><p>代码我已经写好了, 花了一下午的时间整理了下, 放到了我的Github上, <a href="https://github.com/MakeZL/CodeSignTask" target="_blank" rel="external">请戳链接</a></p>
@@ -213,8 +214,7 @@
 <p>然后重签名后这个App, 你会发现就是这样子的了<br><img src="1.png" alt="1"><br><small class="img-hint">防止后的图</small><br><img src="2.jpg" alt="2"></p>
 <p>当然这个方法不是特别好, 但是刚好也能用. 如果你有更好的办法, 欢迎<a href="http://weibo.com/makezl" target="_blank" rel="external">@我</a></p>
 <p>今天的新闻联播就到此结束. 欢迎阅读~</p>
-<h4 id="插播-╯3╰-如果有人觉得有益想支持一下的-可以请我喝小汽水噢-我会替你干杯的"><a href="#插播-╯3╰-如果有人觉得有益想支持一下的-可以请我喝小汽水噢-我会替你干杯的" class="headerlink" title="插播(╯3╰) 如果有人觉得有益想支持一下的, 可以请我喝小汽水噢, 我会替你干杯的~"></a>插播(╯3╰) 如果有人觉得有益想支持一下的, 可以请我喝小汽水噢, 我会替你干杯的~</h4><p><img src="3.png" alt="3"></p>
-<p>(づ￣ 3￣)づ</p>
+<h4 id="插播-╯3╰-如果有人觉得有益想支持一下的-可以请我喝小汽水噢-我会在远方的地方-看着皎洁的明月-替你干杯的。-￣▽￣"><a href="#插播-╯3╰-如果有人觉得有益想支持一下的-可以请我喝小汽水噢-我会在远方的地方-看着皎洁的明月-替你干杯的。-￣▽￣" class="headerlink" title="插播(╯3╰) 如果有人觉得有益想支持一下的, 可以请我喝小汽水噢, 我会在远方的地方, 看着皎洁的明月, 替你干杯的。[]~(￣▽￣)~*"></a>插播(╯3╰) 如果有人觉得有益想支持一下的, 可以请我喝小汽水噢, 我会在远方的地方, 看着皎洁的明月, 替你干杯的。[]~(￣▽￣)~*</h4><p><img src="3.png" alt="3"></p>
 
 
                 <hr>
