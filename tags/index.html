@@ -17,7 +17,7 @@
         
     </title>
 
-    <link rel="canonical" href="https://github.makezl.io/tags/">
+    <link rel="canonical" href="https://makezl.github.io/tags/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -163,9 +163,9 @@
             <!-- 标签云 -->
             <div id='tag_cloud' class="tags">
                 
-                    <a href="#ReverseApp" title="ReverseApp" rel="4">ReverseApp</a>
-                
                     <a href="#ML" title="ML" rel="1">ML</a>
+                
+                    <a href="#ReverseApp" title="ReverseApp" rel="4">ReverseApp</a>
                 
                     <a href="#JSPatch" title="JSPatch" rel="1">JSPatch</a>
                 
@@ -173,6 +173,28 @@
 
             <!-- 标签列表 -->
 
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="ML">
+                    <span class="tag-text">ML</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/2015/06/21/CodeSign/">
+                        <h2 class="post-title">
+                            防止App被修改,加签名判断
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
             
             <div class="one-tag-list">
                 <span class="fa fa-tag listing-seperator" id="ReverseApp">
@@ -232,28 +254,6 @@
                      <a href="/2015/05/15/Xiami/">
                         <h2 class="post-title">
                             虾米音乐下载版权破解
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="ML">
-                    <span class="tag-text">ML</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/2015/06/21/CodeSign/">
-                        <h2 class="post-title">
-                            防止App被修改,加签名判断
                         </h2>
                         
                     </a>
@@ -394,7 +394,7 @@
 <script>
     // only load tagcloud.js in tag.html
     if($('#tag_cloud').length !== 0){
-        async("https://github.makezl.io/js/jquery.tagcloud.js",function(){
+        async("https://makezl.github.io/js/jquery.tagcloud.js",function(){
             $.fn.tagcloud.defaults = {
                 //size: {start: 1, end: 1, unit: 'em'},
                 color: {start: '#bbbbee', end: '#0085a1'},
@@ -428,7 +428,7 @@
 
 
 <!-- Image to hack wechat -->
-<img src="https://github.makezl.io/img/icon_wechat.png" width="0" height="0" />
+<img src="https://makezl.github.io/img/icon_wechat.png" width="0" height="0" />
 <!-- Migrate from head to bottom, no longer block render and still work -->
 
 </body>
