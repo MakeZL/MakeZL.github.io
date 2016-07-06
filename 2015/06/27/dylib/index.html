@@ -13,7 +13,7 @@
 
     <title>
         
-          简单探索dylib - leisuro的博客 | leisuro&#39;s Blog
+          dylib浅析 - leisuro的博客 | leisuro&#39;s Blog
         
     </title>
 
@@ -161,7 +161,7 @@
                           <a class="tag" href="/tags/#ReverseApp" title="ReverseApp">ReverseApp</a>
                         
                     </div>
-                    <h1>简单探索dylib</h1>
+                    <h1>dylib浅析</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
                         Posted by leisuro on
@@ -189,7 +189,15 @@
 <p>.a或者.dylib都将成会被编译器 编译成为编译单元(.o), 每个.o里面有确定的符号和不确定的符号, 所有不确定的符号都在链接过程中互相填补。.a 和 dylib 没有啥本质区别，都是一堆 .o 的集合</p>
 <p>先来介绍下苹果里面的动态函数库 简称: <code>dylib(dynamic library)</code><br>所以dylib在程序编译的时候, 并没有被编译进二进制目标代码中, 只有当程序里执行相应的函数才调用该函数库里对应的函数。</p>
 <p>优势 :<br>    1.文件体积会更小<br>    2.升级会更方便<br>    3.改动代码的话可以省去重新编译的时间</p>
-<h1 id="dylib加载顺序"><a href="#dylib加载顺序" class="headerlink" title="dylib加载顺序"></a>dylib加载顺序</h1><p>没看过<a href="https://weibo.com/sunnyxx" target="_blank" rel="external">@sunnyxx</a>这篇文章的这里是传送门-&gt;<a href="http://blog.sunnyxx.com/2014/08/30/objc-pre-main/" target="_blank" rel="external">iOS 程序 main 函数之前发生了什么</a></p>
+<h1 id="dyld动态链接器与dylib"><a href="#dyld动态链接器与dylib" class="headerlink" title="dyld动态链接器与dylib"></a>dyld动态链接器与dylib</h1><p>本研究从研究分析OS X的动态连接器和加载器开始：dyld。这个二进制文件在/usr/bin目录下，提供标准的加载器和连接器的功能，寻找，加载，连接动态库。</p>
+<p>因为苹果公司曾让dyld开源过，所以分析起来就很简单直接。比如，通过阅读源代码可以很好的理解dyld作为一个可执行程序被加载的过程，包括它所依赖的库加载和连接的过程。下面几点简要的总结了dyld开始的步骤（主要关注与本文研究的相关的）</p>
+<pre><code>1. 当任何一个新的进程开始时，内核设置用户模式的入口点到__dyld_start（dyldStartup.s）。该函数简单的设置stack然后跳转到dyldbootstrap::start()，又跳转到加载器的_main()。
+2. Dyld的_main()函数（dyld.cpp）调用link()，link()然后调用一个ImageLoader对象的link()方法来启动主程序的连接进程。
+3. ImageLoader类（ImageLoader.cpp）中可以发现很多由dyld调用来实现二进制加载逻辑的函数。比如，该类中包含link()方法。当被调用时这个方法又调用对象的recursiveLoadLibraries()方法来进行了所有需求动态库的加载。
+4. ImageLoader的recursiveLoadLibraries()方法确定所有需要的库，然后调用context.loadLibrary()来逐个加载。context对象是一个简单的结构体，包含了在方法和函数之间传递的函数指针。这个结构体的loadLibrary成员在libraryLocator()函数（dyld.cpp）中初始化，它完成的功能也只是简单的调用load()函数。
+5. load()函数（dyld.cpp）调用各种帮助函数，loadPhase0()到loadPhase5()。每一个函数都负责加载进程工作的一个具体任务。比如，解析路径或者处理会影响加载进程的环境变量。
+6. 在loadPhase5()之后，loadPhase6()函数从文件系统加载需求的dylib到内存中。然后调用一个ImageLoaderMachO类的实例对象。来完成每个dylib对象Mach O文件具体的加载和连接逻辑。
+</code></pre><h1 id="dylib加载顺序"><a href="#dylib加载顺序" class="headerlink" title="dylib加载顺序"></a>dylib加载顺序</h1><p>没看过<a href="https://weibo.com/sunnyxx" target="_blank" rel="external">@sunnyxx</a>这篇文章的这里是传送门-&gt;<a href="http://blog.sunnyxx.com/2014/08/30/objc-pre-main/" target="_blank" rel="external">iOS 程序 main 函数之前发生了什么</a></p>
 <p>如何查看当前App引用了那些dylib与framework?<br>查看<strong>Mach-O(可执行二进制文件)</strong>引用的framework与dylib可以通过两种方式来看.</p>
 <pre><code>1. 命令行: otool -L yourApp.app/yourApp
 2. 用MachOView视图工具, File-&gt;Open-&gt;YourApp.app/yourApp
@@ -235,7 +243,7 @@
 <p>用MachOView打开App的可执行文件<br><img src="3.jpg" alt="3"><br><small class="img-hint">修改__RESTRICT后的图片</small></p>
 <p>看到图多了一个Section <strong>RESTRICT, 当然这样只是可以稍微防止一下, 要是别人通过010Editor,改了Mach-O里面的</strong>RESTRICT名字, 那么还是可以注入. ╰( ￣▽￣)╮</p>
 <h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>本文到此就结束了, 本来打算多研究一下Mach-O的文件结构, 但是最近杂事太多, 也没继续往深入研究, 是否对你有帮助呢 或者有好的想法的? 请留言讨论吧 :-) </p>
-<p>感谢<a href="http://blog.sunnyxx.com" target="_blank" rel="external">@sunnyxx</a>, 感谢<a href="http://blogfshare.com" target="_blank" rel="external">@AloneMonkey</a>.</p>
+<p>感谢<a href="http://blog.sunnyxx.com" target="_blank" rel="external">@sunnyxx</a>, 感谢<a href="http://blogfshare.com" target="_blank" rel="external">@AloneMonkey</a>的一些指导.</p>
 
 
                 <hr>
@@ -246,7 +254,7 @@
                 <div class="ds-share"
                     style="text-align: right"
                     data-thread-key="2015/06/27/dylib/"
-                    data-title="简单探索dylib"
+                    data-title="dylib浅析"
                     data-url="https://makezl.github.io/2015/06/27/dylib/"
                     data-images=""
                     data-content="前言很多时候写代码, 很少会静下心来 想想某个函数内部大概是怎么实现, 苹果为什么要这么设计?... | leisuro的博客 | leisuro&#39;s Blog " >
@@ -279,7 +287,7 @@
                 <div class="comment">
                     <div class="ds-thread"
                         data-thread-key="2015/06/27/dylib/"
-                        data-title="简单探索dylib"
+                        data-title="dylib浅析"
                         data-url="https://makezl.github.io/2015/06/27/dylib/" >
                     </div>
                 </div>
