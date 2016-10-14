@@ -13,11 +13,11 @@
 
     <title>
         
-          使用JSPatch一些注意的点 - leisuro的博客 | leisuro&#39;s Blog
+          简单的做一款微信防止撤回小插件 - leisuro的博客 | leisuro&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="https://makezl.github.io/2015/05/10/JSPatch/">
+    <link rel="canonical" href="https://makezl.github.io/2016/05/27/WeChatOnRevoke/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -158,14 +158,14 @@
                 <div class="post-heading">
                     <div class="tags">
                         
-                          <a class="tag" href="/tags/#JSPatch" title="JSPatch">JSPatch</a>
+                          <a class="tag" href="/tags/#ReverseApp" title="ReverseApp">ReverseApp</a>
                         
                     </div>
-                    <h1>使用JSPatch一些注意的点</h1>
+                    <h1>简单的做一款微信防止撤回小插件</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
                         Posted by leisuro on
-                        2015-05-10
+                        2016-05-27
                     </span>
                 </div>
             </div>
@@ -184,28 +184,25 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>使用JSPatch一些需要注意的地方<br>JSPatch提供的OC转JS网址这里 JSPatch一般用法就是，通过转换打好补丁js，第一步通过<code>[JSPatch startEngine]</code>开启引擎后, 加载<code>[JSPatch evaluateScript:js]</code>js代码.<br>那么稍微打补丁不注意会造成崩溃, 以下说说会崩溃的点，以及怎样使用.</p>
-<h4 id="1-数组取值"><a href="#1-数组取值" class="headerlink" title="1.数组取值"></a>1.数组取值</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">OC代码: SYAPIPostReplyEntity *replyEntity = self.post.info.diarys[indexPath.row];</span><br><span class="line">JSPatch: var replyEntity = self.post().info().replies[indexPath().row](); </span><br><span class="line">// 下面才是正确的</span><br><span class="line">var indexPathRow = indexPath.row();</span><br><span class="line">var replies =  self.post().info().replies();</span><br><span class="line">var replyEntity = replies.objectAtIndex(indexPathRow);</span><br></pre></td></tr></table></figure>
-<h4 id="2-字典取值"><a href="#2-字典取值" class="headerlink" title="2.字典取值"></a>2.字典取值</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">OC代码: NSString *contentHtml = contentDict[@&quot;html&quot;];</span><br><span class="line">// 通过网站转换过来的, 会造成崩溃的，是需要分割下的</span><br><span class="line">JSPatch: var contentHtml = contentDict[&quot;html&quot;]</span><br><span class="line">// 下面才是正确的</span><br><span class="line">var contentHtml = contentDict.valueForKey(&quot;html&quot;);</span><br><span class="line">#### 3.判断自定义的类型</span><br><span class="line">OC代码: if ([cell isKindOfClass:SYPostTopicCell.class])&#123;&#125;</span><br><span class="line">// 通过网站转换过来的&gt;&gt; 以下会造成崩溃的，因为你需要引入require(&apos;SYPostTopicCell,...&apos;)</span><br><span class="line">JSPatch: if (cell.isKindOfClass(SYPostTopicCell.class())) &#123;&#125;</span><br><span class="line">// 下面才是正确的</span><br><span class="line">require(&apos;SYPostTopicCell&apos;)</span><br><span class="line">if (cell.isKindOfClass(SYPostTopicCell.class())) &#123;&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="4-自定义枚举跟系统枚举"><a href="#4-自定义枚举跟系统枚举" class="headerlink" title="4.自定义枚举跟系统枚举"></a>4.自定义枚举跟系统枚举</h4><p>OC代码:<br>假设已经定义好了这个枚举 &gt;<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">typedef NS_ENUM(NSInteger, SYPostTopicStatus) &#123;</span><br><span class="line">SYPostTopicStatusHtml = 0,</span><br><span class="line">SYPostTopicStatusProduct,</span><br><span class="line">SYPostTopicStatusDiary,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<p>JSPatch代码: <code>if (self.status == SYPostTopicStatusHtml) {}</code><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">// 通过网站转换过来的&gt;&gt; 以下会造成崩溃的，因为JSPatch解析不了枚举</span><br><span class="line">if (self.status == SYPostTopicStatusHtml) &#123;&#125;</span><br><span class="line">// 下面才是正确的</span><br><span class="line">if (self.status == 0) &#123;&#125;</span><br></pre></td></tr></table></figure></p>
-<h4 id="5-方法带下划线的，JSPatch自己解析方法名有-下划线可以不用管"><a href="#5-方法带下划线的，JSPatch自己解析方法名有-下划线可以不用管" class="headerlink" title="5.方法带下划线的，JSPatch自己解析方法名有_下划线可以不用管"></a>5.方法带下划线的，JSPatch自己解析方法名有_下划线可以不用管</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">OC代码: [self.imageView sd_setImageWithURL: placeholderImage:];</span><br><span class="line">// 通过网站转换过来的&gt;&gt; 以下会造成崩溃的，因为方法带了_下划线的方法名, 开头要有双下划线</span><br><span class="line">self.imageView.sd_setImageWithURL_placeholderImage(&quot;url&quot;,image);</span><br><span class="line">// 下面才是正确的</span><br><span class="line">self.imageView.sd__setImageWithURL_placeholderImage(&quot;url&quot;,image);</span><br></pre></td></tr></table></figure>
-<h4 id="6-有一点static变量是在打Patch的方法进行初始化的需要注意"><a href="#6-有一点static变量是在打Patch的方法进行初始化的需要注意" class="headerlink" title="6.有一点static变量是在打Patch的方法进行初始化的需要注意"></a>6.有一点static变量是在打Patch的方法进行初始化的需要注意</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">OC:</span><br><span class="line">if (!replyHeights) &#123;</span><br><span class="line">replyHeights = [NSMutableDictionary dictionary];</span><br><span class="line">&#125;</span><br><span class="line">JSPatch: 也需要进行初始化，不然外部使用这个变量的时候，是nil;</span><br><span class="line">var replyHeights;</span><br><span class="line">if (!replyHeights) &#123;</span><br><span class="line">replyHeights = NSMutableDictionary.dictionary();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="7-关于方法重写"><a href="#7-关于方法重写" class="headerlink" title="7.关于方法重写"></a>7.关于方法重写</h4><blockquote>
-<p>如果你重写的方法，是之前类不存在的, 是打不上的, 打比方tableView 计算高度的方法你没写, 然后想打JSPatch，返回一定的高度，是打不上的，只能覆盖原有存在方法</p>
+                <p>在微信群里面聊天的时候, 经常会有人一言不合就撤回消息, 怎么来防止这种恶劣的行为呢?<br>以下展开研究..</p>
+<p><img src="1.png" alt="1"><br><small class="img-hint">防撤回的图</small></p>
+<blockquote>
+<p>微信的聊天数据全部存储在本地MM.sqlite里面, 所以只需要hook被撤回的方法不被执行就好了, 下面进入界面分析</p>
 </blockquote>
-<h4 id="8-关于frame"><a href="#8-关于frame" class="headerlink" title="8.关于frame"></a>8.关于frame</h4><blockquote>
-<p>获取一个View的frame.size的时候尽量分割多个变量来取，不要一次性全部取完. like&gt;&gt; self.view().frame().size().height …</p>
+<p><img src="2.jpg" alt="2"><br><small class="img-hint">链接到ssh</small><br><code>定位到BaseMsgContentViewController.h</code><br><img src="3.jpg" alt="3"><br><small class="img-hint">查看当前的控制器</small><br><code>命令行输入 : /opt/theos/bin/logify.pl 解析的Headers.h &gt; 生成的.xm</code><br><img src="4.png" alt="4"><br><small class="img-hint">使用Theos logify.pl快速生成Tweak</small><br><img src="5.png" alt="5"><br><small class="img-hint">查看在根目录底下生成的文件</small></p>
+<p>查看log, 开始查找可疑方法<br><img src="6.png" alt="6"><br><small class="img-hint">查看调用的方法</small></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// BaseMsgContentViewController.h</span></span><br><span class="line">- (<span class="keyword">void</span>)revokeMsgByNodeView:(id)arg1;</span><br><span class="line">- (<span class="keyword">void</span>)OnRevokeMsg:(id)arg1 MsgWrap:(id)arg2 ResultCode:(unsigned int)arg3 ResultMsg:(id)arg4 EducationMsg:(id)arg5;</span><br></pre></td></tr></table></figure>
+<p>尝试什么事都不做, 但是数据还是被移除了, 证明BaseMsgContentViewController这个控制器接收到的信息只是为了展示数据, 通过查看方法的偏移量+App的偏移地址, 上LLDB追踪地址(这里不详细叙述)一直追到<code>CMessageMgr.h - (void)onRevokeMsg:(id)arg1;</code><br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)onRevokeMsg:(id)arg1;</span><br></pre></td></tr></table></figure><br>尝试着将onRevokeMsg方法什么事都不做.<br>编译运行, 发现确实可以了, 但是别人撤回了消息, 从界面来看我并不知道.<br>所以. 我们需要加个提醒.<br><img src="7.png" alt="7"><br><small class="img-hint">加提示</small></p>
+<p>撤回也就是删除一条消息的时候, <code>CMessageMgr.h</code>会调用DelMsg:MsgWarp:方法, 在这里进行真正的进行删除消息, 索性在这里面进行hook. 所以原来的提示将会保留.<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)DelMsg:(id)arg1 MsgList:(id)arg2 DelAll:(BOOL)arg3;</span><br><span class="line">- (<span class="keyword">void</span>)DelMsg:(id)arg1 MsgWrap:(id)arg2;</span><br></pre></td></tr></table></figure></p>
+<p>但是, 我不想看到”xx”撤回了一条消息, 想换成其他字眼怎么办呢？</p>
+<p>消息是<code>CMessageWrap</code>对象, 里面有m_nsContent对象<br>采用最简单最暴力的办法</p>
+<p>创建Tweak<code>/opt/theos/bin/nic.pl Tweak.xm</code>….(网上太多教程这里不概述)<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">%hook CMessageMgr</span><br><span class="line">- (<span class="keyword">void</span>)DelMsg:(id)arg1 MsgList:(id)arg2 DelAll:(_Bool)arg3&#123;</span><br><span class="line">%log;</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">void</span>)DelMsg:(id)arg1 MsgWrap:(id)arg2&#123;</span><br><span class="line">%log;</span><br><span class="line">&#125;</span><br><span class="line">%end</span><br><span class="line"></span><br><span class="line">%hook CMessageWrap</span><br><span class="line">- (NSString *)m_nsContent&#123;</span><br><span class="line">    NSString *content = %orig;</span><br><span class="line">    <span class="keyword">if</span> ([content rangeOfString:@<span class="string">"撤回了一条消息"</span>].length &gt; <span class="number">0</span>)&#123;</span><br><span class="line">        NSArray *strings = @[</span><br><span class="line">            @<span class="string">", 可是被帅气机智的我瞄了一眼"</span>,</span><br><span class="line">            @<span class="string">", 但是瞒不过我犀利的双眸"</span>,</span><br><span class="line">            @<span class="string">", 都是成年人了, 何必遮遮掩掩呢?"</span>,</span><br><span class="line">        ];</span><br><span class="line">        BOOL isExistsText = NO;</span><br><span class="line">        <span class="keyword">for</span> (NSString *string <span class="keyword">in</span> strings) &#123;</span><br><span class="line">            <span class="keyword">if</span> ([content rangeOfString:string].length != <span class="number">0</span>) &#123;</span><br><span class="line">                isExistsText = YES;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!isExistsText)&#123;</span><br><span class="line">            content = [content stringByAppendingString:strings[arc4random_uniform(strings.count)]];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> content;</span><br><span class="line">&#125;</span><br><span class="line">%end</span><br></pre></td></tr></table></figure></p>
+<h3 id="重新编译Tweak"><a href="#重新编译Tweak" class="headerlink" title="重新编译Tweak"></a>重新编译Tweak</h3><blockquote>
+<p>$ make package install<br>然后输入ssh的密码安装</p>
 </blockquote>
-<h4 id="9-关于延时"><a href="#9-关于延时" class="headerlink" title="9. 关于延时"></a>9. 关于延时</h4><blockquote>
-<p>使用dispatch_after换成 dispatch_after(0.5, function() {}</p>
-</blockquote>
-<h4 id="10-关于调试Log"><a href="#10-关于调试Log" class="headerlink" title="10. 关于调试Log"></a>10. 关于调试Log</h4><blockquote>
-<p>JSPatch: console.log(‘Hello iOS’)</p>
-</blockquote>
-<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><blockquote>
-<p>打JSPatch多，总归是我们程序员本身写代码质量的问题, 不管是从什么角度来说, 都是细节没注意到位, 我就是个写代码很快缺细节总是不到位的一个人, 缺点很明显, 我要努力去要求自己像处女座一样. 1. 一个方法的代码量尽量不超过100行, 尽可能的越清晰越短, 打Patch也不至于那么麻烦 2. 写代码仔细, 细心, 可以跟同事CodeReview 3. 1,2 做好了, 3点也就没了</p>
-</blockquote>
+<p><img src="8.jpg" alt="8"></p>
+<h3 id="idea"><a href="#idea" class="headerlink" title="idea"></a>idea</h3><p>当然用OpenDev生成dylib, 重签名到非越狱的机子上也是可以的~<br>当然有想法也可以用JSPatch来注入, 想用lua.js 也是可以尝试的~<br>或者hopper直接改DelMsg:MsgWarp:的汇编代码return; 也是可行的~<br>编译运行后, 你再查看别人撤回的消息, 然后就是上面那图的效果了~</p>
+<p>仅供学习~ 欢迎交流.</p>
 
 
                 <hr>
@@ -215,11 +212,11 @@
                 </style>
                 <div class="ds-share"
                     style="text-align: right"
-                    data-thread-key="2015/05/10/JSPatch/"
-                    data-title="使用JSPatch一些注意的点"
-                    data-url="https://makezl.github.io/2015/05/10/JSPatch/"
+                    data-thread-key="2016/05/27/WeChatOnRevoke/"
+                    data-title="简单的做一款微信防止撤回小插件"
+                    data-url="https://makezl.github.io/2016/05/27/WeChatOnRevoke/"
                     data-images=""
-                    data-content="使用JSPatch一些需要注意的地方JSPatch提供的OC转JS网址这里 JSPatch一般... | leisuro的博客 | leisuro&#39;s Blog " >
+                    data-content="在微信群里面聊天的时候, 经常会有人一言不合就撤回消息, 怎么来防止这种恶劣的行为呢?以下展开... | leisuro的博客 | leisuro&#39;s Blog " >
                     <div class="ds-share-inline">
                       <ul  class="ds-share-icons-16">
                         <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
@@ -238,9 +235,13 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/2015/05/14/Didi/" data-toggle="tooltip" data-placement="top" title="如何去改变滴滴出行里面快车的图标?">&larr; Previous Post</a>
+                            <a href="/2016/06/10/Force/" data-toggle="tooltip" data-placement="top" title="让非6s的越狱设备支持3DTouch">&larr; Previous Post</a>
                         </li>
                     
+                    
+                        <li class="next">
+                            <a href="/2016/05/15/Xiami/" data-toggle="tooltip" data-placement="top" title="虾米音乐下载版权破解">Next Post &rarr;</a>
+                        </li>
                     
                 </ul>
 
@@ -248,9 +249,9 @@
                 <!-- 多说评论框 start -->
                 <div class="comment">
                     <div class="ds-thread"
-                        data-thread-key="2015/05/10/JSPatch/"
-                        data-title="使用JSPatch一些注意的点"
-                        data-url="https://makezl.github.io/2015/05/10/JSPatch/" >
+                        data-thread-key="2016/05/27/WeChatOnRevoke/"
+                        data-title="简单的做一款微信防止撤回小插件"
+                        data-url="https://makezl.github.io/2016/05/27/WeChatOnRevoke/" >
                     </div>
                 </div>
                 <!-- 多说评论框 end -->
@@ -276,7 +277,7 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#JSPatch" title="JSPatch">JSPatch</a>
+                          <a class="tag" href="/tags/#ReverseApp" title="ReverseApp">ReverseApp</a>
                         
                     </div>
                 </section>

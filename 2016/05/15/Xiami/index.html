@@ -13,11 +13,11 @@
 
     <title>
         
-          简单的做一款微信防止撤回小插件 - leisuro的博客 | leisuro&#39;s Blog
+          虾米音乐下载版权破解 - leisuro的博客 | leisuro&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="https://makezl.github.io/2015/05/27/WeChatOnRevoke/">
+    <link rel="canonical" href="https://makezl.github.io/2016/05/15/Xiami/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -161,11 +161,11 @@
                           <a class="tag" href="/tags/#ReverseApp" title="ReverseApp">ReverseApp</a>
                         
                     </div>
-                    <h1>简单的做一款微信防止撤回小插件</h1>
+                    <h1>虾米音乐下载版权破解</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
                         Posted by leisuro on
-                        2015-05-27
+                        2016-05-15
                     </span>
                 </div>
             </div>
@@ -184,25 +184,72 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>在微信群里面聊天的时候, 经常会有人一言不合就撤回消息, 怎么来防止这种恶劣的行为呢?<br>以下展开研究..</p>
-<p><img src="1.png" alt="1"><br><small class="img-hint">防撤回的图</small></p>
+                <p>虾米音乐下载版权破解<br>虾米是我比较喜欢的音乐App之一, 可近期体验不好的一点是, 很多歌曲被下架, 都听不了。 如果是之前加入本地缓存了歌还好, 没缓存的只能看别人听了, 这点让宝宝很是不开心. 好了, 接下来就要来尝试去破解下载它.</p>
+<p><img src="xiami_1.png" alt="xiami"><br><small class="img-hint">无法下载</small></p>
+<p>本文涉及到的工具</p>
+<pre><code>1. theos (https://github.com/theos/theos) 下载到/opt/theos
+2. hopper (http://pan.baidu.com/s/1qXoIJ1q) 网盘密码:3jgj
+3. ldid (http://joedj.net/ldid) 下载ldid，放到/opt/theos/bin/目录底下
+</code></pre><ol>
+<li><a href="#越狱版">非越狱版</a><ol>
+<li><a href="#ipa">ipa</a></li>
+<li><a href="#hopper">hopper</a></li>
+<li><a href="#ldid">ldid</a></li>
+<li><a href="#重签名">重签名</a></li>
+</ol>
+</li>
+<li><a href="#非越狱版">越狱版</a><ol>
+<li><a href="#theos">theos</a></li>
+</ol>
+</li>
+</ol>
+<ul>
+<li><h2 id="非越狱版"><a href="#非越狱版" class="headerlink" title="非越狱版"></a>非越狱版</h2></li>
+<li><h4 id="ipa"><a href="#ipa" class="headerlink" title="ipa"></a>ipa</h4><p>通过pp助手或者同步助手, 下载App的ipa包, 通过解压归档文件, 里面包含了需要逆向的App文件等信息</p>
+</li>
+<li><h4 id="hopper"><a href="#hopper" class="headerlink" title="hopper"></a>hopper</h4><p>有了App的可执行文件, 那我们就可以去做点什么事情了, 将xiami.app拖进hopper里面, 在左上角去搜索<code>XVerifyRightResultModel</code>这个类, 里面有个<code>isVerifySuccess</code>的Bool类型的变量, 它就是我们要改的值.<br><img src="hopper.png" alt="hopper"><br><small class="img-hint">查看某个类</small><br>下面我们来修改这个<code>isVerifySuccess</code>的返回值为true.<br>按住键盘上的<code>Option+A</code>, 将值永远返回成true, 0x1<br><img src="hopper1.png" alt="hopper1"><br>将下一行的值也通过<code>Option+A</code>, 修改换成<code>bx lr</code><br><img src="hopper2.png" alt="hopper2"><br>完毕后按住键盘上<code>Shift+Command+E</code>导出可执行文件到桌面, 命名需要跟虾米App里面的可执行文件名字一样, 进入虾米App里面, 替换可执行文件.</p>
+</li>
+</ul>
 <blockquote>
-<p>微信的聊天数据全部存储在本地MM.sqlite里面, 所以只需要hook被撤回的方法不被执行就好了, 下面进入界面分析</p>
+<p>大工即将完成</p>
 </blockquote>
-<p><img src="2.jpg" alt="2"><br><small class="img-hint">链接到ssh</small><br><code>定位到BaseMsgContentViewController.h</code><br><img src="3.jpg" alt="3"><br><small class="img-hint">查看当前的控制器</small><br><code>命令行输入 : /opt/theos/bin/logify.pl 解析的Headers.h &gt; 生成的.xm</code><br><img src="4.png" alt="4"><br><small class="img-hint">使用Theos logify.pl快速生成Tweak</small><br><img src="5.png" alt="5"><br><small class="img-hint">查看在根目录底下生成的文件</small></p>
-<p>查看log, 开始查找可疑方法<br><img src="6.png" alt="6"><br><small class="img-hint">查看调用的方法</small></p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// BaseMsgContentViewController.h</span></span><br><span class="line">- (<span class="keyword">void</span>)revokeMsgByNodeView:(id)arg1;</span><br><span class="line">- (<span class="keyword">void</span>)OnRevokeMsg:(id)arg1 MsgWrap:(id)arg2 ResultCode:(unsigned int)arg3 ResultMsg:(id)arg4 EducationMsg:(id)arg5;</span><br></pre></td></tr></table></figure>
-<p>尝试什么事都不做, 但是数据还是被移除了, 证明BaseMsgContentViewController这个控制器接收到的信息只是为了展示数据, 通过查看方法的偏移量+App的偏移地址, 上LLDB追踪地址(这里不详细叙述)一直追到<code>CMessageMgr.h - (void)onRevokeMsg:(id)arg1;</code><br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)onRevokeMsg:(id)arg1;</span><br></pre></td></tr></table></figure><br>尝试着将onRevokeMsg方法什么事都不做.<br>编译运行, 发现确实可以了, 但是别人撤回了消息, 从界面来看我并不知道.<br>所以. 我们需要加个提醒.<br><img src="7.png" alt="7"><br><small class="img-hint">加提示</small></p>
-<p>撤回也就是删除一条消息的时候, <code>CMessageMgr.h</code>会调用DelMsg:MsgWarp:方法, 在这里进行真正的进行删除消息, 索性在这里面进行hook. 所以原来的提示将会保留.<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)DelMsg:(id)arg1 MsgList:(id)arg2 DelAll:(BOOL)arg3;</span><br><span class="line">- (<span class="keyword">void</span>)DelMsg:(id)arg1 MsgWrap:(id)arg2;</span><br></pre></td></tr></table></figure></p>
-<p>但是, 我不想看到”xx”撤回了一条消息, 想换成其他字眼怎么办呢？</p>
-<p>消息是<code>CMessageWrap</code>对象, 里面有m_nsContent对象<br>采用最简单最暴力的办法</p>
-<p>创建Tweak<code>/opt/theos/bin/nic.pl Tweak.xm</code>….(网上太多教程这里不概述)<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">%hook CMessageMgr</span><br><span class="line">- (<span class="keyword">void</span>)DelMsg:(id)arg1 MsgList:(id)arg2 DelAll:(_Bool)arg3&#123;</span><br><span class="line">%log;</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">void</span>)DelMsg:(id)arg1 MsgWrap:(id)arg2&#123;</span><br><span class="line">%log;</span><br><span class="line">&#125;</span><br><span class="line">%end</span><br><span class="line"></span><br><span class="line">%hook CMessageWrap</span><br><span class="line">- (NSString *)m_nsContent&#123;</span><br><span class="line">    NSString *content = %orig;</span><br><span class="line">    <span class="keyword">if</span> ([content rangeOfString:@<span class="string">"撤回了一条消息"</span>].length &gt; <span class="number">0</span>)&#123;</span><br><span class="line">        NSArray *strings = @[</span><br><span class="line">            @<span class="string">", 可是被帅气机智的我瞄了一眼"</span>,</span><br><span class="line">            @<span class="string">", 但是瞒不过我犀利的双眸"</span>,</span><br><span class="line">            @<span class="string">", 都是成年人了, 何必遮遮掩掩呢?"</span>,</span><br><span class="line">        ];</span><br><span class="line">        BOOL isExistsText = NO;</span><br><span class="line">        <span class="keyword">for</span> (NSString *string <span class="keyword">in</span> strings) &#123;</span><br><span class="line">            <span class="keyword">if</span> ([content rangeOfString:string].length != <span class="number">0</span>) &#123;</span><br><span class="line">                isExistsText = YES;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!isExistsText)&#123;</span><br><span class="line">            content = [content stringByAppendingString:strings[arc4random_uniform(strings.count)]];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> content;</span><br><span class="line">&#125;</span><br><span class="line">%end</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><h4 id="ldid"><a href="#ldid" class="headerlink" title="ldid"></a>ldid</h4></li>
+</ul>
+<p>拿到你公司项目或者自己创建一个Demo, 选择好Code Sign编译后, 通过ldid来获取App底下的数据, 但是得保证你手机上安装的证书是有效的.</p>
+<p><code>./ldid -e ./Demo.app/demo</code> </p>
+<p>新建Entitlements.plist<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span>?&gt;</span><br><span class="line">&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;</span><br><span class="line">&lt;plist version="1.0"&gt;</span><br><span class="line">&lt;dict&gt;</span><br><span class="line">&lt;key&gt;application-identifier&lt;/key&gt;</span><br><span class="line">&lt;string&gt;123456.io.github.makezl&lt;/string&gt;</span><br><span class="line">&lt;key&gt;com.apple.developer.team-identifier&lt;/key&gt;</span><br><span class="line">&lt;string&gt;123456&lt;/string&gt;</span><br><span class="line">&lt;key&gt;get-task-allow&lt;/key&gt;</span><br><span class="line">&lt;true/&gt;</span><br><span class="line">&lt;key&gt;keychain-access-groups&lt;/key&gt;</span><br><span class="line">&lt;array&gt;</span><br><span class="line">&lt;string&gt;123456.io.github.makezl&lt;/string&gt;</span><br><span class="line">&lt;/array&gt;</span><br><span class="line">&lt;/dict&gt;</span><br><span class="line">&lt;/plist&gt;</span><br></pre></td></tr></table></figure></p>
+<h4 id="embedded-mobileprovision"><a href="#embedded-mobileprovision" class="headerlink" title="embedded.mobileprovision"></a>embedded.mobileprovision</h4><p>进入公司的App, 或者你自己编译好的App里面, 复制embedded.mobileprovision到xiami.app里面</p>
+<ul>
+<li><h4 id="重签名"><a href="#重签名" class="headerlink" title="重签名"></a>重签名</h4></li>
+</ul>
+<blockquote>
+<p>证书名字可以在钥匙串中找到</p>
+</blockquote>
+<p>codesign -f -s “iPhone Developer: YouName” –entitlements Entitlements.plist xiami.app</p>
+<p>打包成ipa, 给虾米音乐重新签名后，我们就可以用xcrun来生成ipa了，具体实现如下：<br><code>xcrun -sdk iphoneos PackageApplication -v xiami.app  -o ~/xiami.ipa</code></p>
+<p>通过PP助手安装到你手机上, 就可以啦~~</p>
+<p><img src="xiami_2.png" alt="xiami2"><br><small class="img-hint">修改后的虾米音乐</small></p>
+<ul>
+<li><h2 id="越狱版"><a href="#越狱版" class="headerlink" title="越狱版"></a>越狱版</h2></li>
+</ul>
+<p>获取App文件: 通过dumpdecrypted砸壳, 网上很多资料讲解, 或者简单一点通过pp助手或者同步助手, 下载App的ipa包, 通过解压归档文件, 里面包含了需要逆向的App文件等信息</p>
+<blockquote>
+<p>分析: 第一步尝试的通过Tweak去修改会员的返回值, 通过hopper搜索isVip这个类型的变量, 发现改了isVip也无法下载, 会员应该是通过服务器同步的.</p>
+</blockquote>
+<h3 id="以上貌似是错误分析"><a href="#以上貌似是错误分析" class="headerlink" title="以上貌似是错误分析"></a>以上貌似是错误分析</h3><p><img src="bm.jpg" alt="bm"></p>
+<blockquote>
+<p>换思路. 从界面入手, 通过Cycript找到下载按钮的位置, 然后一步步去跟踪下载会调用的方法, 最终找到判断是否可以下载的方法, hook掉.<br>第一步尝试的通过Tweak去修改isVip这个类型的数据, 发现即时改了isVip也无法下载, 应该是通过服务器同步的.<br>暂时放弃了通过修改vip的办法..<br>通过Hopper一步步追踪实现找到了<code>XVerifyRightResultModel</code>类, 看到有个属性<code>isVerifySuccess</code></p>
+</blockquote>
+<p>创建Tweak<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">%hook XVerifyRightResultModel</span><br><span class="line">- (BOOL)isVerifySuccess&#123;</span><br><span class="line"><span class="keyword">return</span> YES;</span><br><span class="line">&#125;</span><br><span class="line">%end</span><br></pre></td></tr></table></figure></p>
 <h3 id="重新编译Tweak"><a href="#重新编译Tweak" class="headerlink" title="重新编译Tweak"></a>重新编译Tweak</h3><blockquote>
 <p>$ make package install<br>然后输入ssh的密码安装</p>
 </blockquote>
-<p><img src="8.jpg" alt="8"></p>
-<h3 id="idea"><a href="#idea" class="headerlink" title="idea"></a>idea</h3><p>当然用OpenDev生成dylib, 重签名到非越狱的机子上也是可以的~<br>当然有想法也可以用JSPatch来注入, 想用lua.js 也是可以尝试的~<br>或者hopper直接改DelMsg:MsgWarp:的汇编代码return; 也是可行的~<br>编译运行后, 你再查看别人撤回的消息, 然后就是上面那图的效果了~</p>
-<p>仅供学习~ 欢迎交流.</p>
+<p><img src="xiami_2.png" alt="xiami2"><br><small class="img-hint">修改后的虾米音乐</small><br>可以成功下载歌曲, 但是不能直接播放音乐. 有兴趣的童鞋弄好了, 可以告诉我下~<br>以后不担心歌曲随便下架的问题了 &gt;v&lt;</p>
+<blockquote>
+<p>ps:不逆向虽然可以写逆向的东西, 但是调试起来局限性太大. 简单的修改微信步数, 修改迅雷vip这些通常只需要改一个返回值而已, 复杂的就不行啦.</p>
+</blockquote>
+<p>以上内容仅供学习~ 欢迎交流.</p>
 
 
                 <hr>
@@ -212,11 +259,11 @@
                 </style>
                 <div class="ds-share"
                     style="text-align: right"
-                    data-thread-key="2015/05/27/WeChatOnRevoke/"
-                    data-title="简单的做一款微信防止撤回小插件"
-                    data-url="https://makezl.github.io/2015/05/27/WeChatOnRevoke/"
+                    data-thread-key="2016/05/15/Xiami/"
+                    data-title="虾米音乐下载版权破解"
+                    data-url="https://makezl.github.io/2016/05/15/Xiami/"
                     data-images=""
-                    data-content="在微信群里面聊天的时候, 经常会有人一言不合就撤回消息, 怎么来防止这种恶劣的行为呢?以下展开... | leisuro的博客 | leisuro&#39;s Blog " >
+                    data-content="虾米音乐下载版权破解虾米是我比较喜欢的音乐App之一, 可近期体验不好的一点是, 很多歌曲被下... | leisuro的博客 | leisuro&#39;s Blog " >
                     <div class="ds-share-inline">
                       <ul  class="ds-share-icons-16">
                         <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
@@ -235,12 +282,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/2015/06/10/Force/" data-toggle="tooltip" data-placement="top" title="让非6s的越狱设备支持3DTouch">&larr; Previous Post</a>
+                            <a href="/2016/05/27/WeChatOnRevoke/" data-toggle="tooltip" data-placement="top" title="简单的做一款微信防止撤回小插件">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/2015/05/15/Xiami/" data-toggle="tooltip" data-placement="top" title="虾米音乐下载版权破解">Next Post &rarr;</a>
+                            <a href="/2016/05/14/Didi/" data-toggle="tooltip" data-placement="top" title="如何去改变滴滴出行里面快车的图标?">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -249,9 +296,9 @@
                 <!-- 多说评论框 start -->
                 <div class="comment">
                     <div class="ds-thread"
-                        data-thread-key="2015/05/27/WeChatOnRevoke/"
-                        data-title="简单的做一款微信防止撤回小插件"
-                        data-url="https://makezl.github.io/2015/05/27/WeChatOnRevoke/" >
+                        data-thread-key="2016/05/15/Xiami/"
+                        data-title="虾米音乐下载版权破解"
+                        data-url="https://makezl.github.io/2016/05/15/Xiami/" >
                     </div>
                 </div>
                 <!-- 多说评论框 end -->
